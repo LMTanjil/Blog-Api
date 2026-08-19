@@ -22,6 +22,29 @@ export const createBlog = async (req, res) => {
     }
 }
 
+export const createBlogs = async (req, res) => {
+    const blogs = req.body.map(({ title, description, author }) => ({
+        title,
+        description,
+        author
+    }));
+    try{
+        const create_blogs = Blog.insertMany(blogs)
+
+        return res.status(201).json({
+            success: true,
+            message: "Blogs created successfully",
+            total_blogs: (await create_blogs).length,
+            data: create_blogs,
+        });
+    }catch(err) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+}
+
 export const getBlogbyId = async (req, res) => {
     const {id} = req.params;
     try{
@@ -45,6 +68,7 @@ export const getAllBlogs = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "All blogs found successfully",
+            total_blogs: (await allBlogs).length,
             data:allBlogs
         });
     }
